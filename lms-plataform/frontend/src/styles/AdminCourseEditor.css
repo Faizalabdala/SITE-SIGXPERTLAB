@@ -1,0 +1,357 @@
+.admin-course-editor {
+  padding: 40px;
+  max-width: 1000px;
+  margin: 0 auto;
+  font-family: Arial, sans-serif;
+}
+
+.admin-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 2px solid #4caf50;
+  padding-bottom: 10px;
+  margin-bottom: 20px;
+}
+
+.back-button {
+  background: none;
+  border: none;
+  color: #666;
+  cursor: pointer;
+  margin-bottom: 5px;
+  font-size: 16px;
+}
+
+.back-button:hover {
+  color: #333;
+}
+
+.admin-badge {
+  background: #e8f5e9;
+  padding: 5px 10px;
+  border-radius: 5px;
+  color: #2e7d32;
+  font-size: 0.9rem;
+}
+
+.edit-toggle-btn {
+  padding: 8px 15px;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.edit-toggle-btn.edit {
+  background: #ff9800;
+}
+
+.edit-toggle-btn.view {
+  background: #2196f3;
+}
+
+.edit-toggle-btn:hover {
+  opacity: 0.9;
+}
+
+/* Formulário de Edição do Curso */
+.course-form-container {
+  background: #f8f9fa;
+  padding: 25px;
+  border-radius: 8px;
+  margin-bottom: 30px;
+  border: 2px solid #2196f3;
+}
+
+.course-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-label {
+  font-weight: bold;
+  display: block;
+  margin-bottom: 5px;
+  color: #333;
+}
+
+.form-input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: #2196f3;
+}
+
+.form-textarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  height: 80px;
+  resize: vertical;
+  font-family: Arial, sans-serif;
+}
+
+.price-free-container {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+}
+
+.price-container {
+  flex: 1;
+}
+
+.free-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 25px;
+}
+
+.checkbox-label {
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.submit-btn {
+  padding: 12px 20px;
+  background: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+  align-self: flex-start;
+}
+
+.submit-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.submit-btn:hover:not(:disabled) {
+  background: #45a049;
+}
+
+/* Módulos e Aulas */
+.modules-section {
+  margin-top: 30px;
+}
+
+.modules-title {
+  color: #333;
+  margin-bottom: 20px;
+}
+
+.module-card {
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+}
+
+.module-header {
+  background: #f9f9f9;
+  padding: 15px;
+  border-bottom: 1px solid #eee;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.module-title {
+  margin: 0;
+  color: #333;
+}
+
+.delete-module-btn {
+  color: #dc3545;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 5px 10px;
+}
+
+.delete-module-btn:hover {
+  background: #ffe6e6;
+  border-radius: 4px;
+}
+
+.module-content {
+  padding: 20px;
+}
+
+.empty-lessons {
+  color: #999;
+  font-style: italic;
+}
+
+.lessons-list {
+  list-style: none;
+  padding: 0;
+}
+
+.lesson-item {
+  background: white;
+  padding: 10px;
+  margin-bottom: 8px;
+  border-radius: 4px;
+  border: 1px solid #eee;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.lesson-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.video-icon {
+  color: #4caf50;
+  font-size: 16px;
+}
+
+.lesson-duration {
+  font-size: 0.8rem;
+  color: #666;
+}
+
+.delete-lesson-btn {
+  color: #dc3545;
+  background: none;
+  border: 1px solid #dc3545;
+  border-radius: 4px;
+  padding: 2px 8px;
+  cursor: pointer;
+  font-size: 0.8rem;
+}
+
+.delete-lesson-btn:hover {
+  background: #dc3545;
+  color: white;
+}
+
+/* Formulário de Nova Aula */
+.lesson-form {
+  background: #e8f5e9;
+  padding: 15px;
+  border-radius: 8px;
+  margin-top: 15px;
+  border: 1px solid #4caf50;
+}
+
+.lesson-form-title {
+  margin-top: 0;
+  color: #2e7d32;
+}
+
+.lesson-form-row {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.add-lesson-btn {
+  margin-top: 10px;
+  background: white;
+  border: 1px dashed #4caf50;
+  color: #4caf50;
+  padding: 8px;
+  width: 100%;
+  cursor: pointer;
+  border-radius: 4px;
+  font-weight: bold;
+}
+
+.add-lesson-btn:hover {
+  background: #f0f9f0;
+}
+
+/* Criar Novo Módulo */
+.new-module-container {
+  margin-top: 40px;
+  background: #eee;
+  padding: 20px;
+  border-radius: 8px;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.new-module-title {
+  margin: 0;
+  margin-right: 10px;
+  color: #333;
+}
+
+.new-module-input {
+  padding: 10px;
+  flex: 1;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.add-module-btn {
+  padding: 10px 20px;
+  background: #2196f3;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.add-module-btn:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
+
+.add-module-btn:hover:not(:disabled) {
+  background: #1976d2;
+}
+
+/* Estados de Loading e Erro */
+.loading-container,
+.error-container,
+.not-found-container {
+  padding: 40px;
+  text-align: center;
+  font-family: Arial, sans-serif;
+}
+
+.error-message {
+  color: red;
+}
+
+.retry-btn {
+  margin-top: 20px;
+  padding: 10px 20px;
+  background: #2196f3;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.retry-btn:hover {
+  background: #1976d2;
+}

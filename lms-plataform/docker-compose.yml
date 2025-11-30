@@ -1,0 +1,17 @@
+version: "3.8"
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: lms_postgres
+    restart: always
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: password_segura_local
+      POSTGRES_DB: lms_db
+    ports:
+      - "5435:5432" # <--- MUDANÇA AQUI (Porta externa 5433)
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+volumes:
+  pgdata:

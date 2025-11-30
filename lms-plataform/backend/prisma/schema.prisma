@@ -1,0 +1,95 @@
+// backend/prisma/schema.prisma
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  // Porta 5435, usuário admin, senha 123
+  url      = "postgresql://admin:123@127.0.0.1:5435/lms_db?schema=public"
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  name      String
+  email     String   @unique
+  password  String   // Lembre-se: Hash na aplicação real
+  role      String   @default("student") // 'admin', 'student'
+  createdAt DateTime @default(now())
+  
+  enrollments Enrollment[]
+  progress    LessonProgress[]
+
+  @@map("users")
+}
+
+model Course {
+  id          Int      @id @default(autoincrement())
+  title       String
+  description String?
+  thumbnail   String?  // URL da imagem
+  price       Decimal  @db.Decimal(10, 2)
+  isFree      Boolean  @default(false)
+  published   Boolean  @default(false)
+  createdAt   DateTime @default(now())
+
+  modules     Module[]
+  enrollments Enrollment[]
+
+  @@map("courses")
+}
+
+model Module {
+  id        Int      @id @default(autoincrement())
+  title     String
+  order     Int      // Para ordenar: Módulo 1, Módulo 2...
+  courseId  Int
+  course    Course   @relation(fields: [courseId], references: [id])
+  lessons   Lesson[]
+
+  @@map("modules")
+}
+
+model Lesson {
+  id          Int      @id @default(autoincrement())
+  title       String
+  description String?
+  vimeoId     String   // ID do video no Vimeo (ex: "123456789")
+  duration    Int      // Duração em segundos
+  order       Int
+  moduleId    Int
+  module      Module   @relation(fields: [moduleId], references: [id])
+  
+  progress    LessonProgress[]
+
+  @@map("lessons")
+}
+
+model Enrollment {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id])
+  courseId  Int
+  course    Course   @relation(fields: [courseId], references: [id])
+  createdAt DateTime @default(now())
+
+  @@unique([userId, courseId]) // Um aluno só se matricula 1 vez no mesmo curso
+  @@map("enrollments")
+}
+
+model LessonProgress {
+  id                Int      @id @default(autoincrement())
+  userId            Int
+  user              User     @relation(fields: [userId], references: [id])
+  lessonId          Int
+  lesson            Lesson   @relation(fields: [lessonId], references: [id])
+  
+  status            String   @default("started") // 'started', 'completed'
+  progressPercent   Int      @default(0)
+  lastWatchedSecond Int      @default(0)
+  updatedAt         DateTime @default(now())
+
+  @@unique([userId, lessonId])
+  @@map("lesson_progress")
+}

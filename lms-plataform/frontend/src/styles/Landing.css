@@ -1,0 +1,443 @@
+/* frontend/src/styles/Landing.css */
+
+:root {
+  --color-primary: #2e86ab;
+  --color-secondary: #6c757d;
+  --color-accent: #28a745;
+  --color-orange: #fd7e14;
+  --color-background: #f8f9fa;
+  --color-text: #212529;
+  --color-text-light: #ffffff;
+}
+
+.landing-page {
+  font-family: "Arial", sans-serif;
+  background: linear-gradient(135deg, var(--color-background) 0%, #e3f2fd 100%);
+  color: var(--color-text);
+  line-height: 1.6;
+}
+
+/* --- NAVBAR --- */
+.navbar {
+  background-color: var(--color-secondary);
+  padding: 1rem 5%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  position: sticky;
+  top: 0;
+  z-index: 900;
+}
+
+.logo h1 {
+  color: var(--color-primary);
+  font-size: 2rem;
+  margin: 0;
+  font-weight: bold;
+}
+.logo-slogan {
+  color: var(--color-text-light);
+  font-size: 0.8rem;
+  margin: 0;
+  opacity: 0.9;
+  font-style: italic;
+}
+
+.nav-links {
+  display: flex;
+  gap: 1.5rem;
+  align-items: center;
+}
+.nav-links a {
+  color: var(--color-text-light);
+  text-decoration: none;
+  font-weight: bold;
+  font-size: 1.1rem;
+  transition: 0.3s;
+}
+.nav-links a:hover {
+  color: var(--color-accent);
+}
+
+.btn-login {
+  background-color: var(--color-primary);
+  color: var(--color-text-light);
+  padding: 0.8rem 1.5rem;
+  border: 2px solid var(--color-primary);
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  text-transform: uppercase;
+  transition: 0.3s;
+}
+.btn-login:hover {
+  background-color: transparent;
+  color: var(--color-primary);
+}
+
+/* --- HERO (Mapa Giratório) --- */
+#hero {
+  background: linear-gradient(
+    135deg,
+    rgba(46, 134, 171, 0.9),
+    rgba(40, 167, 69, 0.8)
+  );
+  min-height: 90vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 5%;
+  overflow: hidden; /* Importante para a animação não criar scrollbar */
+}
+
+.hero-container {
+  display: flex;
+  align-items: center;
+  gap: 4rem;
+  max-width: 1200px;
+  width: 100%;
+}
+.hero-content {
+  flex: 1;
+  color: white;
+}
+.hero-content h1 {
+  font-size: 3.5rem;
+  margin-bottom: 1rem;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+.hero-content p {
+  font-size: 1.3rem;
+  margin-bottom: 2rem;
+}
+
+.btn-secondary {
+  background: transparent;
+  border: 2px solid white;
+  color: white;
+  padding: 1rem 2rem;
+  border-radius: 8px;
+  font-weight: bold;
+  font-size: 1.2rem;
+  cursor: pointer;
+}
+.btn-secondary:hover {
+  background: white;
+  color: var(--color-primary);
+}
+
+/* A MÁGICA DO MAPA ESTÁ AQUI */
+.hero-image {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.cadastro-section {
+  background-color: white;
+  padding: 3rem 2rem;
+  border-radius: 15px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  max-width: 600px;
+  margin: 0 auto;
+}
+.cadastro-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+.cadastro-form input {
+  padding: 1rem;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background: #f9f9f9;
+}
+.btn-cadastrar {
+  background: linear-gradient(135deg, #1e3a8a, #3b82f6);
+  color: white;
+  border: none;
+  padding: 1rem;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+}
+.hero-image img {
+  max-width: 100%;
+  border-radius: 5%; /* Se quiser que o mapa pareça um globo */
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+
+  /* Animação de rotação infinita */
+  animation: rotateMap 20s linear infinite;
+}
+
+/* Definição da animação de rotação */
+@keyframes rotateMap {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* --- CURSOS --- */
+#cursos {
+  padding: 5rem 5%;
+  background: var(--color-background);
+}
+.section-title {
+  text-align: center;
+  color: var(--color-primary);
+  font-size: 3rem;
+  margin-bottom: 3rem;
+}
+.cursos-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 2rem;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.curso-card {
+  background: linear-gradient(145deg, var(--color-secondary), #5a6268);
+  padding: 1.5rem;
+  border-radius: 12px;
+  text-align: center;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  color: white;
+  display: flex;
+  flex-direction: column;
+  transition: 0.3s;
+}
+.curso-card:hover {
+  transform: translateY(-10px);
+}
+.curso-img {
+  height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1rem;
+}
+.curso-img img {
+  max-height: 100%;
+  max-width: 100%;
+  object-fit: contain;
+}
+.curso-card h3 {
+  font-size: 1.4rem;
+  margin-bottom: 0.5rem;
+  color: white;
+}
+.curso-card p {
+  color: #ddd;
+  font-size: 0.9rem;
+  margin-bottom: 1rem;
+  flex: 1;
+}
+
+.curso-preco {
+  margin: 1rem 0;
+  font-size: 1.2rem;
+}
+.preco-free {
+  color: #00ff00;
+  font-weight: bold;
+  font-size: 1.5rem;
+  text-transform: uppercase;
+}
+.preco-atual {
+  color: var(--color-orange);
+  font-weight: bold;
+  font-size: 1.3rem;
+}
+.preco-original {
+  text-decoration: line-through;
+  color: #bbb;
+  margin-right: 10px;
+  font-size: 0.9rem;
+}
+
+.btn-outline {
+  background: transparent;
+  border: 2px solid var(--color-accent);
+  color: var(--color-accent);
+  padding: 0.6rem;
+  border-radius: 8px;
+  cursor: pointer;
+  width: 100%;
+  font-weight: bold;
+  margin-top: auto;
+}
+.btn-outline:hover {
+  background: var(--color-accent);
+  color: white;
+}
+
+/* --- SOBRE NÓS (Correção Horizontal) --- */
+#sobre {
+  padding: 5rem 5%;
+  background-color: var(--color-secondary);
+}
+#sobre h2 {
+  text-align: center;
+  color: white;
+  font-size: 3rem;
+  margin-bottom: 3rem;
+}
+
+.sobre-container {
+  display: grid;
+  /* CORREÇÃO: Garante 3 colunas iguais em telas grandes */
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.sobre-card {
+  background-color: #ffffff;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+  transition: all 0.3s ease;
+  text-align: justify; /* Centraliza texto e ícones */
+}
+.sobre-card:hover {
+  transform: translateY(-5px);
+}
+
+.sobre-card h3 {
+  color: var(--color-primary);
+  font-size: 1.8rem;
+  margin-bottom: 1rem;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center; /* Centraliza o título com ícone */
+  gap: 10px;
+}
+
+/* --- CONTATO --- */
+#contato {
+  padding: 5rem 5%;
+  background-color: #f8f9fa;
+  text-align: center;
+}
+.contato-container {
+  max-width: 800px;
+  margin: 0 auto;
+}
+.btn-whatsapp {
+  background: linear-gradient(135deg, #25d366, #1ea952);
+  color: white;
+  border: none;
+  padding: 1.2rem 2.5rem;
+  border-radius: 50px;
+  font-size: 1.1rem;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 8px 25px rgba(37, 211, 102, 0.4);
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 3rem;
+}
+.btn-whatsapp:hover {
+  transform: translateY(-3px);
+}
+
+/* --- MODAL LOGIN --- */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.85);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+}
+.modal-content {
+  background-color: white;
+  padding: 2.5rem;
+  border-radius: 15px;
+  width: 90%;
+  max-width: 400px;
+  position: relative;
+  text-align: center;
+}
+.close-btn {
+  position: absolute;
+  top: 15px;
+  right: 20px;
+  font-size: 1.5rem;
+  cursor: pointer;
+  border: none;
+  background: none;
+}
+.modal-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+.form-group {
+  text-align: left;
+}
+.form-group input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+.btn-modal-submit {
+  background: var(--color-primary);
+  color: white;
+  padding: 12px;
+  border: none;
+  border-radius: 5px;
+  font-weight: bold;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+/* Footer */
+footer {
+  background: var(--color-secondary);
+  color: white;
+  padding: 3rem 5%;
+  text-align: center;
+}
+.footer-content {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+  gap: 2rem;
+}
+
+/* Responsividade (Mobile) */
+@media (max-width: 900px) {
+  .hero-container {
+    flex-direction: column;
+    text-align: center;
+  }
+  .hero-image {
+    justify-content: center;
+  }
+
+  /* No telemóvel, 'sobre' e 'cursos' ficam verticais */
+  .cursos-grid,
+  .sobre-container {
+    grid-template-columns: 1fr;
+  }
+
+  .nav-links {
+    display: none;
+  } /* Menu mobile simplificado */
+}

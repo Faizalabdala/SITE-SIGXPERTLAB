@@ -1,0 +1,182 @@
+/* frontend/src/styles/Player.css */
+
+.player-wrapper {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background-color: #f9f9f9;
+  font-family: "Arial", sans-serif;
+  overflow: hidden;
+}
+
+/* Header Escuro (YouTube style) */
+.player-header {
+  background: #202020;
+  color: white;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+  flex-shrink: 0;
+  z-index: 100;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+.player-back-btn {
+  background: transparent;
+  border: none;
+  color: #fff;
+  cursor: pointer;
+  font-size: 1.1rem;
+  display: flex;
+  align-items: center;
+  opacity: 0.8;
+  transition: opacity 0.2s;
+}
+.player-back-btn:hover {
+  opacity: 1;
+}
+
+/* Layout Corpo */
+.player-body {
+  display: flex;
+  flex: 1;
+  overflow: hidden; /* Scroll independente nas colunas */
+}
+
+/* --- COLUNA ESQUERDA (VÍDEO + INFO) --- */
+.player-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background: #f9f9f9;
+  overflow-y: auto; /* Scroll aqui */
+}
+
+/* Container do Vídeo (Cinema Mode) */
+.video-stage {
+  width: 100%;
+  background: black;
+  position: relative;
+  display: flex;
+  justify-content: center;
+}
+
+/* Mantém o vídeo em 16:9 mas limita a altura para não preencher a tela toda se for muito grande */
+.video-ratio-box {
+  width: 100%;
+  max-width: 1280px; /* Limite de largura estilo YouTube */
+  aspect-ratio: 16 / 9;
+  position: relative;
+}
+
+.video-frame-absolute {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+/* Informações (Descrição) */
+.video-info {
+  padding: 20px 24px;
+  max-width: 1280px;
+  margin: 0 auto;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.video-title {
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: #0f0f0f;
+  margin: 0 0 10px 0;
+  line-height: 1.3;
+}
+
+.video-desc-box {
+  background: #f2f2f2;
+  padding: 15px;
+  border-radius: 12px;
+  margin-top: 15px;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  color: #0f0f0f;
+  white-space: pre-wrap; /* Mantém parágrafos */
+}
+
+/* --- COLUNA DIREITA (PLAYLIST) --- */
+.player-sidebar {
+  width: 400px;
+  background: white;
+  border-left: 1px solid #e5e5e5;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  overflow-y: auto;
+}
+
+.sidebar-header {
+  padding: 15px 20px;
+  font-weight: bold;
+  font-size: 1.1rem;
+  border-bottom: 1px solid #eee;
+  background: #fff;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+/* Acordeão de Módulos */
+details {
+  border-bottom: 1px solid #eee;
+}
+summary {
+  padding: 15px 20px;
+  cursor: pointer;
+  font-weight: 600;
+  background: #fff;
+  list-style: none;
+  display: flex;
+  justify-content: space-between;
+  transition: background 0.2s;
+}
+summary:hover {
+  background: #f9f9f9;
+}
+
+.lesson-row {
+  padding: 10px 20px;
+  cursor: pointer;
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  transition: background 0.2s;
+  border-left: 4px solid transparent;
+}
+.lesson-row:hover {
+  background: #f0f0f0;
+}
+.lesson-row.active {
+  background: #e8f5e9;
+  border-left-color: #4caf50;
+}
+
+/* Mobile */
+@media (max-width: 1000px) {
+  .player-body {
+    flex-direction: column;
+  }
+  .player-sidebar {
+    width: 100%;
+    height: auto;
+    border-left: none;
+  }
+  .video-stage {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+  }
+}
