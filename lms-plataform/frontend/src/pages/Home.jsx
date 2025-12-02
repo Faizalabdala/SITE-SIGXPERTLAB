@@ -7,27 +7,28 @@ import "../styles/Dashboard.css";
 
 export default function Home() {
   const [courses, setCourses] = useState([]);
-  const [myCourses, setMyCourses] = useState([]);
   const [user, setUser] = useState(null);
-  const [activeTab, setActiveTab] = useState("meus-cursos");
-  const [showDropdown, setShowDropdown] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  console.log("🔍 DEBUG - Home carregado");
-  console.log("👤 User:", user);
-  console.log("📚 Cursos públicos:", courses.length);
-  console.log("🎓 Meus cursos:", myCourses.length);
+
   useEffect(() => {
     checkUser();
     loadPublicCourses();
   }, []);
 
+  useEffect(() => {
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) {
+      // Se o usuário está logado E está na Home, redireciona para /student
+      console.log("🔍 Usuário logado na Home - redirecionando para /student");
+      navigate("/student", { replace: true }); // replace: true para limpar histórico
+    }
+  }, [user, navigate]);
+
   const checkUser = () => {
     const storedUser = localStorage.getItem("user");
     if (storedUser) {
       setUser(JSON.parse(storedUser));
-      loadMyCourses();
     }
   };
 
@@ -38,48 +39,39 @@ export default function Home() {
       .catch(console.error);
   };
 
-  const loadMyCourses = () => {
-    api
-      .get("/my-courses")
-      .then((res) => setMyCourses(res.data))
-      .catch(console.error);
-  };
-
   const handleLoginSuccess = (userData) => {
     console.log("🔑 Login success - redirecionando...");
     setUser(userData);
-    loadMyCourses();
 
     const pendingCourse = localStorage.getItem("pendingPaymentCourse");
-    console.log("📦 Curso pendente?", pendingCourse);
 
     if (pendingCourse) {
       const course = JSON.parse(pendingCourse);
       localStorage.removeItem("pendingPaymentCourse");
-      console.log("🎯 Fluxo: Home → Login → Pagamento");
 
+      // Verificar acesso após login
       setTimeout(() => {
-        const hasAccess = myCourses.some((c) => c.id === course.id);
+        api
+          .get("/my-courses")
+          .then((res) => {
+            const myCourses = res.data;
+            const hasAccess = myCourses.some((c) => c.id === course.id);
 
-        if (hasAccess || course.isFree) {
-          console.log("✅ Tem acesso - indo para player");
-          navigate(`/player/${course.id}`);
-        } else {
-          console.log("💳 Sem acesso - indo para pagamento");
-          handleBuyCourse(course);
-        }
+            if (hasAccess || course.isFree) {
+              console.log("✅ Tem acesso - indo para player");
+              navigate(`/player/${course.id}`);
+            } else {
+              console.log("💳 Sem acesso - indo para pagamento");
+              handleBuyCourse(course, userData);
+            }
+          })
+          .catch(console.error);
       }, 500);
     } else {
       console.log("🏠 Login normal - indo para /student");
-      navigate("/student"); // ← DEVE REDIRECIONAR AQUI
-    }
-  };
-  const handleLogout = () => {
-    if (confirm("Deseja sair?")) {
-      localStorage.clear();
-      setUser(null);
-      setMyCourses([]);
-      window.location.reload();
+      navigate("/student");
+      // Fechar modal se estiver aberto
+      setIsModalOpen(false);
     }
   };
 
@@ -106,41 +98,36 @@ export default function Home() {
     }
 
     // Se logado, verifica acesso
-    const hasAccess = myCourses.some((c) => c.id === course.id);
+    api
+      .get("/my-courses")
+      .then((res) => {
+        const myCourses = res.data;
+        const hasAccess = myCourses.some((c) => c.id === course.id);
 
-    if (hasAccess || course.isFree) {
-      // Tem acesso - vai direto para o curso
-      navigate(`/player/${course.id}`);
-    } else {
-      // Não tem acesso - vai para pagamento
-      handleBuyCourse(course);
-    }
+        if (hasAccess || course.isFree) {
+          navigate(`/player/${course.id}`);
+        } else {
+          handleBuyCourse(course, user);
+        }
+      })
+      .catch(console.error);
   };
 
   // --- FUNÇÃO SIMPLES E FUNCIONAL PARA COMPRAR CURSO ---
-  const handleBuyCourse = (course) => {
+  const handleBuyCourse = (course, userData) => {
     console.log("🎯 Curso clicado:", course.title);
-    console.log("🔐 User logado?", !!user);
-    console.log("💵 Curso é grátis?", course.isFree);
 
-    if (!user) {
-      console.log("❌ Usuário não definido");
-      setIsModalOpen(true);
-      return;
-    }
-
-    // Configuração direta do Flutterwave
     const config = {
       public_key: "FLWPUBK_TEST-SANDBOXDEMOKEY-X",
-      tx_ref: `curso-${course.id}-${Date.now()}-${user.id}`,
+      tx_ref: `curso-${course.id}-${Date.now()}-${userData.id}`,
       amount: course.price,
       currency: "MZN",
       payment_options: "card, mobilemoney, ussd",
-      redirect_url: `${window.location.origin}/payment-success?course_id=${course.id}&user_id=${user.id}`,
+      redirect_url: `${window.location.origin}/payment-success?course_id=${course.id}&user_id=${userData.id}`,
       customer: {
-        email: user.email,
-        name: user.name,
-        phone_number: user.phone || "",
+        email: userData.email,
+        name: userData.name,
+        phone_number: userData.phone || "",
       },
       customizations: {
         title: "SigXpert Lab",
@@ -149,20 +136,18 @@ export default function Home() {
       },
       meta: {
         course_id: course.id,
-        user_id: user.id,
+        user_id: userData.id,
         course_name: course.title,
       },
     };
 
     console.log("🔄 Configuração Flutterwave:", config);
 
-    // Método direto - sem hooks complexos
     if (typeof window.FlutterwaveCheckout === "function") {
       console.log("✅ Flutterwave carregado - abrindo checkout");
       window.FlutterwaveCheckout(config);
     } else {
       console.log("📥 Carregando Flutterwave...");
-      // Carrega o script dinamicamente
       const script = document.createElement("script");
       script.src = "https://checkout.flutterwave.com/v3.js";
       script.onload = () => {
@@ -172,215 +157,8 @@ export default function Home() {
       document.body.appendChild(script);
     }
   };
-  // Função para verificar pagamento
-  const verifyPayment = async (transactionId, courseId, userId) => {
-    try {
-      console.log("🔍 Verificando pagamento:", {
-        transactionId,
-        courseId,
-        userId,
-      });
 
-      const response = await api.post("/verify-payment", {
-        transaction_id: transactionId,
-        course_id: courseId,
-        user_id: userId,
-      });
-
-      console.log("✅ Resposta do pagamento:", response.data);
-
-      if (response.data.success) {
-        alert("🎉 Pagamento confirmado! Agora você tem acesso ao curso.");
-        // Recarrega os cursos para atualizar a lista
-        await loadMyCourses();
-        // Vai direto para o curso
-        navigate(`/player/${courseId}`);
-      } else {
-        alert("⏳ Pagamento em processamento. Aguarde a confirmação.");
-      }
-    } catch (error) {
-      console.error("❌ Erro ao verificar pagamento:", error);
-      alert("😕 Erro ao verificar pagamento. Entre em contato conosco.");
-    }
-  };
-
-  // === RENDERIZAÇÃO DASHBOARD (SE LOGADO) ===
-  if (user) {
-    return (
-      <div className="dash-container">
-        <header className="dash-header">
-          <div className="logo">
-            <h1>Geomatica360</h1>
-          </div>
-          <div style={{ position: "relative" }}>
-            <div
-              className="user-pill"
-              onClick={() => setShowDropdown(!showDropdown)}
-            >
-              <div className="pill-avatar">{user.name.charAt(0)}</div>
-              <div>
-                <div style={{ fontWeight: "bold" }}>{user.name}</div>
-                <div style={{ fontSize: "0.8rem" }}>Online</div>
-              </div>
-              <i className="fas fa-chevron-down" style={{ marginLeft: 5 }}></i>
-            </div>
-            {showDropdown && (
-              <div
-                style={{
-                  position: "absolute",
-                  top: "60px",
-                  right: 0,
-                  background: "white",
-                  color: "#333",
-                  borderRadius: "8px",
-                  boxShadow: "0 5px 15px rgba(0,0,0,0.2)",
-                  zIndex: 100,
-                  width: "200px",
-                  overflow: "hidden",
-                }}
-              >
-                {user.role === "admin" && (
-                  <button
-                    onClick={() => navigate("/admin/courses/new")}
-                    style={{
-                      width: "100%",
-                      padding: "15px",
-                      border: "none",
-                      background: "none",
-                      textAlign: "left",
-                      cursor: "pointer",
-                      color: "red",
-                      fontWeight: "bold",
-                      borderBottom: "1px solid #eee",
-                    }}
-                  >
-                    + Criar Curso
-                  </button>
-                )}
-                <button
-                  onClick={handleLogout}
-                  style={{
-                    width: "100%",
-                    padding: "15px",
-                    border: "none",
-                    background: "none",
-                    textAlign: "left",
-                    cursor: "pointer",
-                  }}
-                >
-                  Sair
-                </button>
-              </div>
-            )}
-          </div>
-        </header>
-
-        <div className="nav-tabs">
-          <button
-            className={`dash-btn ${
-              activeTab === "meus-cursos" ? "active" : ""
-            }`}
-            onClick={() => setActiveTab("meus-cursos")}
-          >
-            Meus Cursos
-          </button>
-          <button
-            className={`dash-btn ${
-              activeTab === "certificados" ? "active" : ""
-            }`}
-            onClick={() => setActiveTab("certificados")}
-          >
-            Certificados
-          </button>
-        </div>
-
-        <div style={{ maxWidth: "1200px", margin: "0 auto", padding: "20px" }}>
-          {activeTab === "meus-cursos" && (
-            <div className="cursos-grid">
-              {(myCourses.length > 0 ? myCourses : []).map((course) => (
-                <div
-                  key={course.id}
-                  className="dash-card"
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    background: "white",
-                    borderRadius: "10px",
-                    overflow: "hidden",
-                    padding: 0,
-                  }}
-                >
-                  <div style={{ height: "150px", width: "100%" }}>
-                    <img
-                      src={getCourseImage(course.title)}
-                      style={{
-                        width: "100%",
-                        height: "100%",
-                        objectFit: "cover",
-                      }}
-                    />
-                  </div>
-                  <div style={{ padding: "20px", width: "100%" }}>
-                    <h3>{course.title}</h3>
-                    {course.isFree && (
-                      <span
-                        style={{
-                          color: "green",
-                          fontSize: "0.8rem",
-                          fontWeight: "bold",
-                        }}
-                      >
-                        GRATUITO
-                      </span>
-                    )}
-                    <div className="dash-progress-bg">
-                      <div
-                        className="dash-progress-fill"
-                        style={{ width: `${course.totalProgress || 0}%` }}
-                      ></div>
-                    </div>
-                    <p
-                      style={{
-                        fontSize: "0.8rem",
-                        color: "#666",
-                        marginTop: "5px",
-                      }}
-                    >
-                      {course.totalProgress || 0}% Concluído
-                    </p>
-                    <button
-                      onClick={() => navigate(`/player/${course.id}`)}
-                      className="btn-primary"
-                      style={{ marginTop: "15px", width: "100%" }}
-                    >
-                      Continuar
-                    </button>
-                    {user.role === "admin" && (
-                      <button
-                        onClick={() => navigate(`/admin/courses/${course.id}`)}
-                        style={{
-                          marginTop: "10px",
-                          width: "100%",
-                          padding: "5px",
-                          background: "none",
-                          border: "1px solid #ccc",
-                          cursor: "pointer",
-                        }}
-                      >
-                        Editar
-                      </button>
-                    )}
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-      </div>
-    );
-  }
-
-  // === RENDERIZAÇÃO LANDING PAGE (NÃO LOGADO) ===
+  // === RENDERIZAÇÃO APENAS LANDING PAGE (SEM DASHBOARD) ===
   return (
     <div className="landing-page">
       <LoginModal
@@ -388,7 +166,6 @@ export default function Home() {
         onClose={() => setIsModalOpen(false)}
         onLoginSuccess={handleLoginSuccess}
       />
-
       <header className="navbar">
         <div className="logo">
           <h1>SigXpert Lab</h1>
@@ -401,12 +178,20 @@ export default function Home() {
           <a href="#cursos">Cursos</a>
           <a href="#sobre">Sobre</a>
           <a href="#contato">Contato</a>
-          <button className="btn-login" onClick={() => setIsModalOpen(true)}>
-            Login
-          </button>
+          {!user ? (
+            <button className="btn-login" onClick={() => setIsModalOpen(true)}>
+              Login
+            </button>
+          ) : (
+            // Quando logado, mostra apenas o nome do usuário (não é clicável)
+            <span
+              style={{ color: "#4CAF50", fontWeight: "bold", padding: "10px" }}
+            >
+              {user.name}
+            </span>
+          )}
         </div>
       </header>
-
       <section id="hero">
         <div className="hero-container">
           <div className="hero-content">
@@ -424,7 +209,6 @@ export default function Home() {
           </div>
         </div>
       </section>
-
       <section id="cursos">
         <h2>Nossos Cursos</h2>
         <div className="cursos-grid">
@@ -453,7 +237,6 @@ export default function Home() {
                 )}
               </div>
 
-              {/* Lógica do Botão Inteligente */}
               <button
                 onClick={() => handleCourseAction(course)}
                 className="btn-outline"
@@ -464,7 +247,6 @@ export default function Home() {
           ))}
         </div>
       </section>
-
       <section id="sobre">
         <h2>Sobre Nós</h2>
         <div className="sobre-container">
@@ -512,12 +294,9 @@ export default function Home() {
           </div>
         </div>
       </section>
-
       <section id="beneficios">
         <h2>Por que escolher a SigXpert?</h2>
         <div className="cursos-grid" style={{ color: "white" }}>
-          {" "}
-          {/* Reutilizando grid de cursos para layout */}
           <div className="sobre-card">
             <h3>Certificação</h3>
             <p>Reconhecida internacionalmente.</p>
@@ -532,7 +311,6 @@ export default function Home() {
           </div>
         </div>
       </section>
-
       <section id="contato">
         <div className="contato-container">
           <h2>Entrar em Contato</h2>
@@ -554,7 +332,6 @@ export default function Home() {
             </button>
           </div>
 
-          {/* === NOVA SEÇÃO DE CADASTRO === */}
           <div className="cadastro-section">
             <h2 style={{ fontSize: "2rem" }}>Crie sua conta gratuita</h2>
             <p>Cadastre-se e comece a aprender agora!</p>
@@ -575,7 +352,6 @@ export default function Home() {
                   alert(
                     "Cadastro realizado com sucesso! Faça login para continuar."
                   );
-                  // Limpa o formulário
                   e.target.reset();
                 } catch (error) {
                   alert(
@@ -635,7 +411,6 @@ export default function Home() {
           </div>
         </div>
       </section>
-
       <footer>
         <div className="footer-content">
           <div className="footer-info">

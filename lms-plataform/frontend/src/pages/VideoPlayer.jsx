@@ -175,7 +175,7 @@ export default function VideoPlayer() {
       <header className="player-header">
         <div style={{ display: "flex", alignItems: "center", gap: "15px" }}>
           <button
-            onClick={() => navigate("/")}
+            onClick={() => navigate("/student")}
             className="player-back-btn"
             title="Voltar"
           >
